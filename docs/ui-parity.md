@@ -51,7 +51,7 @@ Artboard Options forwards the active Artboard tool's Scale Artwork with Artboard
 
 | Date | Change | Summary |
 |---|---|---|
-| 2026-11-14 | minor | G5: Tech Circuit adds three original procedural brushes (Circuit Trace, Bus Lines, Terminal Nodes); ten built-in brush libraries. G5 remaining estimate 4–14 h (estimated); parity scores and headline totals unchanged. |
+| 2026-11-14 | minor | G5: Tech Circuit adds three original procedural brushes (Circuit Trace, Bus Lines, Terminal Nodes); ten built-in brush libraries. G5 remaining estimate 3–13 h (estimated); parity scores and headline totals unchanged. |
 | 2026-11-14 | minor | Layers panel: right-clicking a layer/group/object row shows a context menu with Options…, Duplicate, Delete, Lock/Hide Others, Locate Object, and Collect for Export — matching standard desktop layer panel conventions. Scores unchanged. |
 | 2026-11-13 | minor | Graphic Styles: in a panel made taller the list fills the space above the footer instead of stopping at 220 pt (#2992; `the_list_fills_a_tall_panel_above_its_footer` in `crates/ui-egui/src/panels/graphic_styles.rs`). Scores and estimates unchanged. |
 | 2026-11-13 | minor | Library panels (swatch, Color Book, brush, symbol and graphic style libraries): in a panel made taller the list fills the space above the footer instead of scrolling inside 220 or 280 pt (#2992; `the_list_fills_a_tall_panel_above_its_footer` in `crates/ui-egui/src/panels/library_panel/tests.rs`). Scores and estimates unchanged. |
@@ -539,7 +539,7 @@ before release (#6373). [Paint faces and edges](https://helpx.adobe.com/illustra
 
 | Date | Change | Summary |
 |---|---|---|
-| 2026-11-14 | minor | Tech Circuit adds three original procedural brushes (Circuit Trace, Bus Lines, Terminal Nodes); ten built-in brush libraries. G5 remaining estimate 4–14 h (estimated); parity scores and headline totals unchanged. |
+| 2026-11-14 | minor | Tech Circuit adds three original procedural brushes (Circuit Trace, Bus Lines, Terminal Nodes); ten built-in brush libraries. G5 remaining estimate 3–13 h (estimated); parity scores and headline totals unchanged. |
 | 2026-11-12 | minor | Numeric fields: a focus click released more than 1 pt from its press keeps the caret; a tap within 1 pt still selects the whole value (#6659, follow-up to #1326). Scores and estimates unchanged. |
 | 2026-11-12 | minor | Remove Background for a selected image in the Contextual Task Bar, Properties › Quick Actions and the Control bar, which runs at once with its defaults. Scores and estimates unchanged. |
 | 2026-11-12 | minor | Live Paint Bucket fills faces crossed in one drag (#6373). Scores and estimates unchanged. |
