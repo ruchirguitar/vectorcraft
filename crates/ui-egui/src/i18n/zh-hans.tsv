@@ -6627,6 +6627,13 @@ axis	Y Axis	Y 轴
 	Graphite Pencil	石墨铅笔
 	Wax Crayon	蜡笔
 	Charcoal Dust	炭粉
+
+# Original procedural circuit brushes.
+	Tech Circuit	电子电路
+	Circuit Trace	电路走线
+	Bus Lines	总线
+	Terminal Nodes	端子节点
+
 	Notched Ribbon	凹口丝带
 	Double Line	双线
 	Wave	波浪
@@ -7311,6 +7318,12 @@ breakText	Glyphs	字形
 @msg	open the practice sample of `{id}` first (see learn.openSample)	请先打开 `{id}` 的练习示例 (请参阅 learn.openSample)
 @msg	finish `{id}` first (see learn.finish)	请先完成 `{id}` (请参阅 learn.finish)
 @msg	`{id}` is the last tutorial in its skill	`{id}` 是其技能的最后一个教程
+	Reset progress	重置进度
+	Mark Tutorial Step	标记教程步骤
+	Reset Learn Progress	重置学习进度
+@msg	missing `step` (see learn.show)	缺少 `step` (请参阅 learn.show)
+@msg	`step` must be a step number from 0 to {last}	`step` 必须是 0 到 {last} 之间的步骤编号
+@msg	`{id}` is finished (see learn.resetProgress)	`{id}` 已完成 (请参阅 learn.resetProgress)
 
 # Deferred plug-in effects
 	Refresh Deferred Effects	刷新延迟的效果
@@ -9270,9 +9283,3 @@ breakText	Glyphs	字形
 @msg	{width} × {height} pixels is too large for JPEG (at most 65535 pixels a side): lower the resolution	{width} × {height} 像素对 JPEG 而言过大 (每边最多 65535 像素)：请降低分辨率
 @msg	{width} × {height} pixels is too large for Targa (at most 65535 pixels a side): lower the resolution	{width} × {height} 像素对 Targa 而言过大 (每边最多 65535 像素)：请降低分辨率
 @msg	{w} × {h} pixels is too large for PSD (at most {MAX_SIDE} pixels a side): lower the resolution	{w} × {h} 像素对 PSD 而言过大 (每边最多 {MAX_SIDE} 像素)：请降低分辨率
-
-# Original procedural circuit brushes.
-	Tech Circuit	电子电路
-	Circuit Trace	电路走线
-	Bus Lines	总线
-	Terminal Nodes	端子节点

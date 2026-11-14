@@ -6247,6 +6247,13 @@ axis	Y Axis	Y-akse
 	Graphite Pencil	Grafitblyant
 	Wax Crayon	Vokskridt
 	Charcoal Dust	Kulstøv
+
+# Original procedural circuit brushes.
+	Tech Circuit	Tekniske kredsløb
+	Circuit Trace	Kredsløbsbane
+	Bus Lines	Buslinjer
+	Terminal Nodes	Terminalpunkter
+
 	Notched Ribbon	Takket bånd
 	Double Line	Dobbelt linje
 	Wave	Bølge
@@ -6880,6 +6887,12 @@ breakText	Glyphs	Glyffer
 @msg	open the practice sample of `{id}` first (see learn.openSample)	åbn først øvelseseksemplet til `{id}` (se learn.openSample)
 @msg	finish `{id}` first (see learn.finish)	afslut først `{id}` (se learn.finish)
 @msg	`{id}` is the last tutorial in its skill	`{id}` er den sidste vejledning i sin færdighed
+	Reset progress	Nulstil fremskridt
+	Mark Tutorial Step	Markér trin i vejledning
+	Reset Learn Progress	Nulstil læringsfremskridt
+@msg	missing `step` (see learn.show)	`step` mangler (se learn.show)
+@msg	`step` must be a step number from 0 to {last}	`step` skal være et trinnummer fra 0 til {last}
+@msg	`{id}` is finished (see learn.resetProgress)	`{id}` er afsluttet (se learn.resetProgress)
 
 # Deferred plug-in effects
 	Refresh Deferred Effects	Opdatér udskudte effekter
@@ -6902,9 +6915,3 @@ breakText	Glyphs	Glyffer
 	Grommets	Maljer
 	Grommet Inset	Maljernes afstand fra kanten
 	Diameter	Diameter
-
-# Original procedural circuit brushes.
-	Tech Circuit	Tekniske kredsløb
-	Circuit Trace	Kredsløbsbane
-	Bus Lines	Buslinjer
-	Terminal Nodes	Terminalpunkter
