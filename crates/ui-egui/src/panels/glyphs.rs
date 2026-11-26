@@ -15,6 +15,9 @@
 //! as one of its alternates in its word. A glyph no feature reaches whose name does not belong to
 //! another letter is applied as a glyph choice, which may not join. Other glyphs are drawn dimmed,
 //! and their notes say why they cannot be applied to the selection.
+//! A right-click on a cell opens Insert Glyph, or Apply in Alternates for Selection. Choosing it
+//! does what a double-click does. When a double-click would only say why the glyph cannot be
+//! applied, the item is disabled and the document stays as it is.
 //! With Show East Asian Options, the panel menu sets the selected characters' East Asian glyph
 //! form ([`menu_rows`]).
 //! After the framework's categories, the Show menu lists the OpenType categories the browsed font
@@ -24,10 +27,10 @@
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use craft::font_manager::glyphs::{CATEGORIES, CellInfo, GlyphCell, GlyphSource, GlyphsPanel, GlyphsWords};
+use craft::font_manager::glyphs::{CATEGORIES, CellInfo, GlyphCell, GlyphCellMenu, GlyphSource, GlyphsPanel, GlyphsWords};
 use craft::keymap::CommandRef;
-use craft::ui::contract::Bind;
-use craft::ui::menu::PanelRow;
+use craft::ui::contract::{Bind, Props as _, Show as _, ShowContainer as _};
+use craft::ui::menu::{Menu, MenuItem, PanelRow};
 use craft::ui::runtime::commands::{CommandState, CommandStates};
 use craft::ui::runtime::env::Env;
 use egui::{Color32, ColorImage, Ui};
@@ -488,6 +491,41 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     }
     if let Some(pick) = out.alternate {
         pick_alternate(app, pick.cell, pick.glyph);
+    }
+    if let Some(menu) = out.menu
+        && cell_menu(app, ui, &menu)
+    {
+        activate(app, menu.cell);
+    }
+}
+
+/// Insert Glyph, or Apply in Alternates for Selection. `true` when the item ran and a double-click
+/// would change the document. A glyph a double-click would only explain is a disabled item, and
+/// choosing it changes nothing.
+fn cell_menu(app: &mut VectorcraftApp, ui: &mut Ui, menu: &GlyphCellMenu) -> bool {
+    let apply = app.ui.glyphs_panel.category == ALTERNATES;
+    let label = if apply { tl!("Apply") } else { tl!("Insert Glyph") };
+    let enabled = cell_menu_enabled(app, menu.cell);
+    let shown = Menu::context(label, &menu.opener).show(ui, |ui, _| MenuItem::new(label).enabled(enabled).show(ui).ran);
+    shown.inner.unwrap_or(false) && enabled
+}
+
+/// Whether choosing the cell's menu item would do what a double-click does, rather than only report
+/// why the glyph cannot be applied or do nothing.
+fn cell_menu_enabled(app: &mut VectorcraftApp, cell: GlyphCell) -> bool {
+    if !can_insert(app) {
+        return false;
+    }
+    if app.ui.glyphs_panel.category == ALTERNATES {
+        return matches!((alternates_listing(app), cell), (Ok(listing), GlyphCell::Glyph(gid)) if listing.variants.iter().any(|v| v.gid == gid));
+    }
+    match cell {
+        GlyphCell::Char(_) => true,
+        GlyphCell::Glyph(gid) => {
+            let (_, _, Some(face)) = browsed_face(app) else { return false };
+            Fit::of(app, &face).pick(&face, gid).is_some()
+        }
+        _ => false,
     }
 }
 

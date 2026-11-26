@@ -1102,3 +1102,92 @@ fn the_grid_lists_the_same_cells_from_the_character_list_read_once() {
     assert!(list.iter().all(|c| matches!(c, GlyphCell::Glyph(_))), "no character is listed");
     assert!(!list.is_empty(), "the glyphs are listed by glyph id");
 }
+
+/// The name a glyph-id cell shows, as the grid names it.
+fn glyph_cell_name(face: &vectorcraft_text::FontFace, gid: u32) -> String {
+    let name = face.glyph_name(gid).unwrap_or_else(|| format!("gid {gid}"));
+    format!("{name}, glyph {gid}")
+}
+
+/// A right-click on an encoded cell offers Insert Glyph, and choosing it inserts that character in one undo step.
+#[test]
+fn right_clicking_a_glyph_cell_offers_insert_glyph() {
+    use vectorcraft_text::test_fonts::{ALIASED_JOINING_FAMILY, aliased_joining_font};
+    FontDb::global().add_font(aliased_joining_font().expect("the test font builds"));
+    let (mut app, id) = editing("a");
+    let id = id.as_u64().unwrap();
+    app.run("text.setRangeStyle", json!({"id": id, "font": ALIASED_JOINING_FAMILY})).unwrap();
+    select(&mut app, 1, 1);
+    crate::panels::character::end_typing(&mut app);
+    app.ui.glyphs_font = Some((ALIASED_JOINING_FAMILY.to_string(), "Regular".to_string()));
+    let undo = undo_len(&app);
+    let mut panel = crate::tests::panel_harness::Panel::new(app, super::show);
+    panel.secondary_click("B, U+0042");
+    assert!(panel.menu_item_enabled("Insert Glyph"));
+    assert!(!panel.shows("Apply"), "a font-grid cell offers Insert Glyph");
+    panel.click_menu_item("Insert Glyph");
+    {
+        let mut app = panel.app();
+        crate::panels::character::end_typing(&mut app);
+    }
+    let app = panel.app();
+    assert_eq!(plain_of(&app, id), "aB");
+    assert_eq!(undo_len(&app), undo + 1, "one undo step");
+    drop(app);
+    panel.app().run("edit.undo", json!({})).unwrap();
+    assert_eq!(plain_of(&panel.app(), id), "a");
+}
+
+/// In Alternates for Selection a right-click offers Apply, and choosing it applies that cell in one undo step.
+#[test]
+fn right_clicking_an_alternate_cell_offers_apply() {
+    use vectorcraft_text::test_fonts::{JOINING_ALTERNATES_FAMILY, joining_alternates_font, source_sans_gid};
+    FontDb::global().add_font(joining_alternates_font().expect("the test font builds"));
+    let g = |c| u32::from(source_sans_gid(c).expect("a glyph"));
+    let (mut app, id) = editing("\u{628}\u{62A}\u{646}");
+    let id = id.as_u64().unwrap();
+    app.run("text.setRangeStyle", json!({"id": id, "font": JOINING_ALTERNATES_FAMILY})).unwrap();
+    select(&mut app, 2, 4);
+    show_category(&mut app, "Alternates for Selection");
+    let list = listed(&mut app, "Alternates for Selection");
+    let GlyphCell::Glyph(gid) = list[2] else { panic!("an alternate is a glyph") };
+    let face = FontDb::global().face(JOINING_ALTERNATES_FAMILY, "Regular").expect("the test face");
+    let name = glyph_cell_name(&face, gid);
+    let undo = undo_len(&app);
+    let mut panel = crate::tests::panel_harness::Panel::new(app, super::show);
+    panel.secondary_click(&name);
+    assert!(panel.menu_item_enabled("Apply"));
+    assert!(!panel.shows("Insert Glyph"), "an alternate cell offers Apply");
+    panel.click_menu_item("Apply");
+    let app = panel.app();
+    assert_eq!(undo_len(&app), undo + 1, "one undo step");
+    assert_eq!(glyph_ids(&app, &json!(id)), [g('B'), g('x'), g('M')]);
+    drop(app);
+    panel.app().run("edit.undo", json!({})).unwrap();
+    assert_eq!(glyph_ids(&panel.app(), &json!(id)), [g('B'), g('u'), g('M')]);
+}
+
+/// A glyph a double-click would only explain has a disabled menu item, and choosing it changes nothing.
+#[test]
+fn a_glyph_that_cannot_be_applied_disables_the_menu_item() {
+    use vectorcraft_text::test_fonts::{JOINING_ALTERNATES_FAMILY, joining_alternates_font, source_sans_gid};
+    FontDb::global().add_font(joining_alternates_font().expect("the test font builds"));
+    let (mut app, id) = editing("\u{0627}");
+    let id = id.as_u64().unwrap();
+    app.run("text.setRangeStyle", json!({"id": id, "font": JOINING_ALTERNATES_FAMILY})).unwrap();
+    select(&mut app, 0, 2);
+    show_category(&mut app, "stylisticAlternates");
+    let gid = u32::from(source_sans_gid('w').expect("a glyph"));
+    let face = FontDb::global().face(JOINING_ALTERNATES_FAMILY, "Regular").expect("the test face");
+    assert!(cell_info(&mut app, GlyphCell::Glyph(gid)).dimmed, "w is not an alternate of alef");
+    let name = glyph_cell_name(&face, gid);
+    let (undo, status, plain) = (undo_len(&app), app.ui.status.clone(), glyph_ids(&app, &json!(id)));
+    let mut panel = crate::tests::panel_harness::Panel::new(app, super::show);
+    panel.secondary_click(&name);
+    assert!(!panel.menu_item_enabled("Insert Glyph"));
+    panel.click_menu_item("Insert Glyph");
+    let app = panel.app();
+    assert_eq!(glyph_ids(&app, &json!(id)), plain);
+    assert_eq!(undo_len(&app), undo);
+    assert_eq!(app.ui.status, status);
+}
